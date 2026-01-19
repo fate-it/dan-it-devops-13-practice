@@ -2,7 +2,7 @@
 
 # Conditional statement example: Check if a number is positive, negative, or zero
 
-number=0
+number=-8
 
 if [ $number -eq 0 ]; then
     echo "The number is zero."
