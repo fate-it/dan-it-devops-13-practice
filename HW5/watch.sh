@@ -4,7 +4,7 @@ files=$(ls ~/watch)
 
 for file in ${files[*]} 
 do
-    if [ ${file:$(${#file}-5):${#file}} != ".back" ]; then
+    if [[ "$file" != *.back ]]; then
         cat "~/watch/$file"
         mv "~/watch/$file" "~/watch/$file.back"
     fi
