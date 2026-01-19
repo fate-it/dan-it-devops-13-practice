@@ -1,11 +1,12 @@
 #!/bin/bash
 
-files=$(ls ~/watch)
+files=$(ls "$HOME/watch")
 
 for file in ${files[*]} 
 do
     if [[ "$file" != *.back ]]; then
-        cat "~/watch/$file"
-        mv "~/watch/$file" "~/watch/$file.back"
+        cat "$HOME/watch/$file"
+        mv "$HOME/watch/$file" "$HOME/watch/$file.back"
     fi
 done
+sleep 3

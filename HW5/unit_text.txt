@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch file in dir ~/watch
+
+[Service]
+ExecStart=/home/serhii/Desktop/dev-ops13/dan-it-devops-13-practice/HW5/watch.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target 
