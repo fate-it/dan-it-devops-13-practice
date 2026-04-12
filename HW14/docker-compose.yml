@@ -4,7 +4,6 @@ services:
   app:
     build: .
     restart: always
-    # We do not expose port to the host directly because we want users to access via nginx proxy
 
   nginx:
     image: nginx:latest
