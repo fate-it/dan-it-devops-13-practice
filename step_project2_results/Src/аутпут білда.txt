@@ -1,0 +1,245 @@
+Started by user worker
+Obtained Jenkinsfile from git https://github.com/fate-it/dan-it-step2
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on worker in /home/vagrant/jenkins/workspace/node-ci
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Fetching changes from the remote Git repository
+Checking out Revision 44c5433d910a1eee3a1702969d3594c661d84825 (refs/remotes/origin/main)
+Commit message: "add test without npm"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Build Docker)
+[Pipeline] sh
++ docker build -t kuzmenkoserhii053/step-project2:latest .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  102.4kB
+Step 1/8 : FROM node:14
+ ---> a158d3b9b4e3
+Step 2/8 : WORKDIR /app
+ ---> Using cache
+ ---> 82be66cd13f5
+Step 3/8 : COPY package*.json ./
+ ---> Using cache
+ ---> bb2d91a3473f
+Step 4/8 : RUN npm install
+ ---> Using cache
+ ---> 06866a425448
+Step 5/8 : COPY . .
+ ---> Using cache
+ ---> 55fca1a0fd00
+Step 6/8 : EXPOSE 3000
+ ---> Using cache
+ ---> b5170df8c3cd
+Step 7/8 : ENTRYPOINT ["npm"]
+ ---> Using cache
+ ---> 006526e4ac48
+Step 8/8 : CMD ["start"]
+ ---> Using cache
+ ---> c180b1f44fb1
+Successfully built c180b1f44fb1
+Successfully tagged kuzmenkoserhii053/step-project2:latest
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Run tests)
+[Pipeline] sh
+ > git rev-parse --resolve-git-dir /home/vagrant/jenkins/workspace/node-ci/.git # timeout=10
+ > git config remote.origin.url https://github.com/fate-it/dan-it-step2 # timeout=10
+Fetching upstream changes from https://github.com/fate-it/dan-it-step2
+ > git --version # timeout=10
+ > git --version # 'git version 2.34.1'
+ > git fetch --tags --force --progress -- https://github.com/fate-it/dan-it-step2 +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 44c5433d910a1eee3a1702969d3594c661d84825 # timeout=10
++ docker run --rm kuzmenkoserhii053/step-project2:latest test
+
+> app@1.0.0 test /app
+> jest
+
+  console.log
+    App listening
+
+      at Server.log (index.js:11:11)
+
+PASS tests/app.test.js
+  GET /
+    ✓ responds to / (153 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        0.542 s
+Ran all test suites.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push)
+[Pipeline] withCredentials
+Masking supported pattern matches of $PASS
+[Pipeline] {
+[Pipeline] sh
++ echo ****
++ docker login -u kuzmenkoserhii053 --password-stdin
+Login Succeeded
++ docker push kuzmenkoserhii053/step-project2:latest
+The push refers to repository [docker.io/kuzmenkoserhii053/step-project2]
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+0c8cc2f24a4d: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+0c8cc2f24a4d: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+0c8cc2f24a4d: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+6f51ee005dea: Waiting
+0c8cc2f24a4d: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+0c8cc2f24a4d: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+0c8cc2f24a4d: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Waiting
+0c8cc2f24a4d: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+3d2201bd995c: Waiting
+2ff1d7c41c74: Layer already exists
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Waiting
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+0c8cc2f24a4d: Layer already exists
+7b7505e430ec: Waiting
+0d27a8e86132: Waiting
+ee74d2a2f822: Layer already exists
+2ea14e830e8d: Waiting
+b253aeafeaa7: Waiting
+6f51ee005dea: Waiting
+3d2201bd995c: Waiting
+1de76e268b10: Waiting
+d9a8df589451: Waiting
+5f32ed3c3f27: Waiting
+9201f8a1a69c: Waiting
+5f32ed3c3f27: Layer already exists
+9201f8a1a69c: Layer already exists
+7b7505e430ec: Layer already exists
+0d27a8e86132: Layer already exists
+2ea14e830e8d: Waiting
+b253aeafeaa7: Layer already exists
+6f51ee005dea: Layer already exists
+3d2201bd995c: Layer already exists
+1de76e268b10: Layer already exists
+d9a8df589451: Waiting
+d9a8df589451: Layer already exists
+2ea14e830e8d: Waiting
+2ea14e830e8d: Waiting
+2ea14e830e8d: Waiting
+2ea14e830e8d: Pushed
+latest: digest: sha256:c180b1f44fb178d2fbc83307d9360ec46700e0bbab3250fd1980384ed5285708 size: 3202
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
