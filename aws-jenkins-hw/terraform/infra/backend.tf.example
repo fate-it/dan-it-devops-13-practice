@@ -1,0 +1,9 @@
+terraform {
+  backend "s3" {
+    bucket       = "CHANGE_ME_FROM_BOOTSTRAP_OUTPUT"
+    key          = "jenkins-homework/infra/terraform.tfstate"
+    region       = "eu-central-1"
+    encrypt      = true
+    use_lockfile = true
+  }
+}

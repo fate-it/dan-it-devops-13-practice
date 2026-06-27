@@ -1,0 +1,2 @@
+[jenkins_master]
+MASTER_PUBLIC_IP ansible_user=ubuntu ansible_ssh_private_key_file=../generated/jenkins_hw_ed25519

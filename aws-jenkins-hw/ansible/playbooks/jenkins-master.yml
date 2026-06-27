@@ -1,0 +1,101 @@
+---
+- name: Install Jenkins controller and nginx reverse proxy
+  hosts: jenkins_master
+  become: true
+
+  vars:
+    jenkins_key_url: "https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key"
+    jenkins_keyring_path: "/etc/apt/keyrings/jenkins-keyring.asc"
+    jenkins_repo: "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/"
+    jenkins_server_name: "_"
+
+  tasks:
+    - name: Install base packages and Java 21
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - fontconfig
+          - gnupg
+          - openjdk-21-jre
+          - python3-apt
+          - nginx
+        state: present
+        update_cache: true
+
+    - name: Ensure apt keyrings directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Download Jenkins 2026 repository signing key
+      ansible.builtin.get_url:
+        url: "{{ jenkins_key_url }}"
+        dest: "{{ jenkins_keyring_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Add Jenkins LTS apt repository with signed-by keyring
+      ansible.builtin.apt_repository:
+        repo: "{{ jenkins_repo }}"
+        filename: jenkins
+        state: present
+        update_cache: true
+
+    - name: Install Jenkins LTS package
+      ansible.builtin.apt:
+        name: jenkins
+        state: present
+        update_cache: true
+
+    - name: Enable and start Jenkins
+      ansible.builtin.systemd_service:
+        name: jenkins
+        enabled: true
+        state: started
+
+    - name: Remove default nginx site
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: Reload nginx
+
+    - name: Configure nginx as reverse proxy for Jenkins
+      ansible.builtin.template:
+        src: ../templates/jenkins-nginx.conf.j2
+        dest: /etc/nginx/sites-available/jenkins
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload nginx
+
+    - name: Enable Jenkins nginx site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/jenkins
+        dest: /etc/nginx/sites-enabled/jenkins
+        state: link
+      notify: Reload nginx
+
+    - name: Validate nginx config
+      ansible.builtin.command: nginx -t
+      changed_when: false
+
+    - name: Enable and start nginx
+      ansible.builtin.systemd_service:
+        name: nginx
+        enabled: true
+        state: started
+
+    - name: Show initial Jenkins admin password command
+      ansible.builtin.debug:
+        msg: "Run: sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+
+  handlers:
+    - name: Reload nginx
+      ansible.builtin.systemd_service:
+        name: nginx
+        state: reloaded

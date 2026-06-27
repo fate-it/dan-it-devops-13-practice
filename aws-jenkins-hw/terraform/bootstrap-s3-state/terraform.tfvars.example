@@ -1,0 +1,3 @@
+region       = "eu-central-1"
+project_name = "jenkins-hw-serhii"
+# bucket_name = "jenkins-hw-serhii-tfstate-123456" # optional, must be globally unique

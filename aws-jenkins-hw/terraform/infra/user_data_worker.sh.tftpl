@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euxo pipefail
+
+install -d -m 700 -o ubuntu -g ubuntu /home/ubuntu/.ssh
+echo '${ssh_public_key}' > /home/ubuntu/.ssh/authorized_keys
+chown ubuntu:ubuntu /home/ubuntu/.ssh/authorized_keys
+chmod 600 /home/ubuntu/.ssh/authorized_keys
+
+apt-get update -y
+apt-get install -y openjdk-21-jre docker.io git ca-certificates curl
+systemctl enable --now docker
+
+id jenkins || useradd -m -s /bin/bash jenkins
+install -d -m 700 -o jenkins -g jenkins /home/jenkins/.ssh
+echo '${ssh_public_key}' > /home/jenkins/.ssh/authorized_keys
+chown jenkins:jenkins /home/jenkins/.ssh/authorized_keys
+chmod 600 /home/jenkins/.ssh/authorized_keys
+mkdir -p /home/jenkins/agent
+chown -R jenkins:jenkins /home/jenkins/agent
+usermod -aG docker jenkins
