@@ -1,0 +1,49 @@
+groups:
+  - name: infrastructure-alerts
+    rules:
+      - alert: LowDiskSpace
+        expr: |
+          (
+            100 *
+            node_filesystem_avail_bytes{
+              fstype!~"tmpfs|devtmpfs|overlay|squashfs|nsfs"
+            }
+            /
+            node_filesystem_size_bytes{
+              fstype!~"tmpfs|devtmpfs|overlay|squashfs|nsfs"
+            }
+          ) < 15
+          and on (instance, device, mountpoint)
+          node_filesystem_readonly == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Вільного місця на диску менше 15%"
+          description: "На {{ $labels.instance }}, mountpoint={{ $labels.mountpoint }}, залишилось менше 15% вільного місця."
+
+      - alert: HighCPUUsage
+        expr: |
+          (
+            100 -
+            (
+              avg by (instance) (
+                rate(node_cpu_seconds_total{mode="idle"}[5m])
+              ) * 100
+            )
+          ) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Завантаження CPU вище 80%"
+          description: "CPU на {{ $labels.instance }} завантажений більш ніж на 80% протягом 2 хвилин."
+
+      - alert: PrometheusTargetDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus target недоступний"
+          description: "Target {{ $labels.job }} / {{ $labels.instance }} недоступний більше 1 хвилини."
